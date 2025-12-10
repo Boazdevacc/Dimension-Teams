@@ -1,0 +1,114 @@
+    package com.dimensionteams;
+
+import com.dimensionteams.command.MainCommand;
+import com.dimensionteams.command.SetNSpawnCommand;
+import com.dimensionteams.command.SetTeamCommand;
+import com.dimensionteams.command.SetVSpawnCommand;
+import com.dimensionteams.command.SpawnCommand;
+import com.dimensionteams.command.SwitchSidesCommand;
+import com.dimensionteams.command.TeamsCommand;
+import com.dimensionteams.command.TpNCommand;
+import com.dimensionteams.command.TpVCommand;
+import com.dimensionteams.command.TpVnCommand;
+import com.dimensionteams.listener.CombatListener;
+import com.dimensionteams.listener.DiamondOreListener;
+import com.dimensionteams.listener.GhastListener;
+import com.dimensionteams.listener.HoglinListener;
+import com.dimensionteams.listener.IronGolemListener;
+import com.dimensionteams.listener.MagmaCubeListener;
+import com.dimensionteams.listener.MobSpawnListener;
+import com.dimensionteams.listener.PiglinBruteListener;
+import com.dimensionteams.listener.PiglinListener;
+import com.dimensionteams.listener.PlayerListener;
+import com.dimensionteams.listener.StriderListener;
+import com.dimensionteams.listener.WitherSkeletonListener;
+import com.dimensionteams.listener.ZoglinListener;
+import com.dimensionteams.listener.ZombieListener;
+import com.dimensionteams.listener.ZombifiedPiglinListener;
+import com.dimensionteams.manager.CombatManager;
+import com.dimensionteams.manager.TeamManager;
+import com.dimensionteams.task.LavaHealTask;
+import java.util.UUID;
+import lombok.Generated;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+public class DimensionTeams extends JavaPlugin {
+   private TeamManager teamManager;
+   private CombatManager combatManager;
+
+   public void onEnable() {
+      this.saveDefaultConfig();
+      this.teamManager = new TeamManager(this);
+      this.combatManager = new CombatManager(this);
+      this.getCommand("dimensionteams").setExecutor(new MainCommand(this));
+      this.getCommand("switchsides").setExecutor(new SwitchSidesCommand(this));
+      this.getCommand("spawn").setExecutor(new SpawnCommand(this));
+      this.getCommand("setvspawn").setExecutor(new SetVSpawnCommand(this));
+      this.getCommand("setnspawn").setExecutor(new SetNSpawnCommand(this));
+      this.getCommand("tpv").setExecutor(new TpVCommand(this));
+      this.getCommand("tpn").setExecutor(new TpNCommand(this));
+      this.getCommand("tpvn").setExecutor(new TpVnCommand(this));
+      this.getCommand("setteam").setExecutor(new SetTeamCommand(this));
+      this.getCommand("teams").setExecutor(new TeamsCommand(this));
+      this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new CombatListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new MobSpawnListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new DiamondOreListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new IronGolemListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new ZombieListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new PiglinListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new PiglinBruteListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new ZombifiedPiglinListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new HoglinListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new ZoglinListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new WitherSkeletonListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new GhastListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new MagmaCubeListener(this), this);
+      this.getServer().getPluginManager().registerEvents(new StriderListener(this), this);
+      this.getServer().getScheduler().runTaskTimer(this, new LavaHealTask(this), 0L, 20L);
+      this.getLogger().info("DimensionTeams has been enabled!");
+   }
+
+   public void onDisable() {
+      this.getLogger().info("DimensionTeams has been disabled!");
+   }
+
+   public void reload() {
+      this.reloadConfig();
+   }
+
+   public void setPlayerTeam(UUID var1, String var2) {
+      this.teamManager.setTeam(var1, var2);
+   }
+
+   public void applyNetherEffects(Player var1) {
+      var1.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, Integer.MAX_VALUE, 0, false, false));
+      var1.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, Integer.MAX_VALUE, 0, false, false));
+   }
+
+   public void applyVoidEffects(Player var1) {
+      var1.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, Integer.MAX_VALUE, 0, false, false));
+      var1.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Integer.MAX_VALUE, 0, false, false));
+   }
+
+   public void removeTeamEffects(Player var1) {
+      var1.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+      var1.removePotionEffect(PotionEffectType.STRENGTH);
+      var1.removePotionEffect(PotionEffectType.RESISTANCE);
+      var1.removePotionEffect(PotionEffectType.REGENERATION);
+   }
+
+   @Generated
+   public TeamManager getTeamManager() {
+      return this.teamManager;
+   }
+
+   @Generated
+   public CombatManager getCombatManager() {
+      return this.combatManager;
+   }
+}
+    
